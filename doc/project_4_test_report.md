@@ -17,7 +17,7 @@ or as the current starter code is structured:
 ...
 ```
 
-Because we are allowing you to demo your code, you can choose whatever is easiest for you. You must also provide some way to kill storage processes. This can be done directly by sending a signal to the storage process pid e.g. `kill -9 pid`, or you can design a different way of doing this. We will use this capability to test for availability in the case of storage node permanent failure.
+You must also provide some way to kill storage processes. This can be done directly by sending a signal to the storage process pid e.g. `kill -9 pid`, or you can design a different way of doing this (such as killing it after some specified time in your test scenario).
 
 ## Client Driver
 Please write a client driver program that connects to the service, and performs a single GET or PUT operation:

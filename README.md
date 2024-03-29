@@ -17,5 +17,5 @@ Please refer to the Georgia Tech [honor code](http://www.honor.gatech.edu/).
 
 * Clone the repo to get source code
 * [Project Description](./doc/project_4_description.md)
-* [Project Demo](./doc/project_4_test_report.md)
+* [Project Test/Report](./doc/project_4_test_report.md)
 * [Project Submission](./doc/project_4_submission.md)
