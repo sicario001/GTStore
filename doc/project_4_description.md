@@ -26,7 +26,7 @@ For the clients, the driver application, will perform gets and sets to key/value
 They will store in-memory and provide the key-value pairs, those they are responsible for.
 These processes represent the actual key-value store.
 
-2. **Driver application**: A single process [that interacts with GT Store](./project_4_demo_and_report.md).
+2. **Driver application**: A single process [that interacts with GT Store](./project_4_test_and_report.md).
 In a typical interaction, the application
 	1. reads the latest version of the object
 	2. mutates it, and
