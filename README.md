@@ -1,8 +1,8 @@
 # Project 4 - GT Store
 
-**Release Date: Sunday, Mar 29 2024**
+**Release Date: Sunday, Mar 30 2024**
 
-**Due Date: Sunday, Apr 26, 2024, 11:59 PM**
+**Due Date: Sunday, Apr 21, 2024, 11:59 PM**
 
 ---
 
@@ -19,3 +19,4 @@ Please refer to the Georgia Tech [honor code](http://www.honor.gatech.edu/).
 * [Project Description](./doc/project_4_description.md)
 * [Project Test/Report](./doc/project_4_test_report.md)
 * [Project Submission](./doc/project_4_submission.md)
+

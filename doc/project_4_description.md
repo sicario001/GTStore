@@ -1,7 +1,5 @@
 # Project 4: GT Store
 
-**Due Date - Apr 26, 2024, 11:59 PM**
-
 ## 0. Reminder
 
 - You can work in pair on this project.
