@@ -129,3 +129,4 @@ Refer to the following papers, which you can find in `canvas/files/papers/`:
 
 * **RPC options**: We recomment gRPC as of Spring '24. Spend time to familiarize with their usage.
   * [Google gRPC](https://grpc.io/docs/tutorials/basic/c.html)
+  * [gRPC Demo](https://github.com/danieldzahka/gRPC_Demo) (Note that the cmake in advos has been updated as of Fall 2024)
