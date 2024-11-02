@@ -1,8 +1,8 @@
 # Project 4 - GT Store
 
-**Release Date: Sunday, Mar 30 2024**
+**Release Date: Monday, Nov 4 2024**
 
-**Due Date: Sunday, Apr 21, 2024, 11:59 PM**
+**Due Date: Sunday, Dec 1, 2024, 11:59 PM**
 
 ---
 

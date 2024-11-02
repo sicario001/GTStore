@@ -141,7 +141,7 @@ Write a different client program that will perform the following more intensive 
 
 ### Throughput
 
-Perform 200k operations (50/50 read/write mix), on 7 nodes, with 1, 3, and 5 replicas. Plot the troughput in (Ops/s) against number of replicas in a bar chart.
+Perform 200k operations (50/50 read/write mix), on 7 nodes, with 1, 3, and 5 replicas. Plot the throughput in (Ops/s) against number of replicas in a bar chart.
 
 ### Loadbalance
 

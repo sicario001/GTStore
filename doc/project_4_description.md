@@ -3,7 +3,7 @@
 ## 0. Reminder
 
 - You can work in pair on this project.
-- Test program on [VM cluster](https://github.gatech.edu/CS6210-4210-Spring24/Project1/blob/main/doc/vm_userguide.md) before making compression and [submission](./project_4_submission.md).
+- Test program on [VM cluster](https://github.gatech.edu/CS6210-4210-Fall24/Project1/blob/main/doc/vm_userguide.md) before making compression and [submission](./project_4_submission.md).
 
 ## 1. Introduction
 
@@ -34,7 +34,7 @@ In a typical interaction, the application
    1. `init()`: initialize the client session with the manager and other control pathoperations.
    2. `put(key, value)`
    3. `get(key)`
-   4. `finalize()`: control path cleanup operation.
+   4. `finalize()`: control path cleanup operation (some designs may not need to cleanup anything, we are not requiring that finalize() implements a specific behavior)
 
 For each request, the maximal key size is `20 bytes`, and the maximal value size is `1 KB`.
 
