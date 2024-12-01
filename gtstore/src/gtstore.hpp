@@ -16,11 +16,17 @@ using namespace std;
 
 typedef vector<string> val_t;
 
+// Forward declaration of implementation class
+class GTStoreClientImpl;
+
 class GTStoreClient {
 		private:
 				int client_id;
 				val_t value;
+				GTStoreClientImpl* impl;  // Pointer to implementation
 		public:
+				GTStoreClient();
+				~GTStoreClient();
 				void init(int id);
 				void finalize();
 				val_t get(string key);

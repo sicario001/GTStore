@@ -1,29 +1,33 @@
 #include "gtstore.hpp"
+#include <iostream>
+#include <string>
+#include <vector>
 
-void single_set_get(int client_id) {
-		cout << "Testing single set-get for GTStore by client " << client_id << ".\n";
+int main() {
+    GTStoreClient client;
+    
+    // Initialize client
+    std::cout << "Initializing client..." << std::endl;
+    client.init(1);
 
-		GTStoreClient client;
-		client.init(client_id);
+    // Test put operation
+    std::cout << "\nTesting put operation..." << std::endl;
+    val_t test_value = {"value1", "value2", "value3"};
+    bool put_result = client.put("test_key", test_value);
+    std::cout << "Put result: " << (put_result ? "success" : "failure") << std::endl;
 
-		string key = to_string(client_id);
-		vector<string> value;
-		value.push_back("phone");
-		value.push_back("phone_case");
+    // Test get operation
+    std::cout << "\nTesting get operation..." << std::endl;
+    val_t retrieved_value = client.get("test_key");
+    std::cout << "Retrieved values: ";
+    for (const auto& value : retrieved_value) {
+        std::cout << value << " ";
+    }
+    std::cout << std::endl;
 
-		client.put(key, value);
-		client.get(key);
+    // Finalize client
+    std::cout << "\nFinalizing client..." << std::endl;
+    client.finalize();
 
-		client.finalize();
-}
-
-
-int main(int argc, char **argv) {
-		string test = string(argv[1]);
-		int client_id = atoi(argv[2]);
-
-		string test1 = "single_set_get";
-		if (string(argv[1]) ==  test1) {
-				single_set_get(client_id);
-		}
+    return 0;
 }

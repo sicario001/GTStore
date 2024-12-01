@@ -3,15 +3,12 @@
 make clean
 make
 
-# Launch the GTStore Manager
-./bin/manager &
-sleep 5
+# Args: nodes, replicas
+nodes=$1
+replicas=$2
 
-# Launch couple GTStore Storage Nodes
-./bin/storage &
-sleep 5
-./bin/storage &
-sleep 5
+# Start the service
+./start_service.sh $nodes $replicas
 
 # Launch the client testing app
 # Usage: ./test_app <test> <client_id>

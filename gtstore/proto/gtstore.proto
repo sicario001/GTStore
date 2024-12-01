@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package gtstore;
+
+// Service definition
+service GTStore {
+    rpc Init (InitRequest) returns (InitResponse) {}
+    rpc Get (GetRequest) returns (GetResponse) {}
+    rpc Put (PutRequest) returns (PutResponse) {}
+    rpc Finalize (FinalizeRequest) returns (FinalizeResponse) {}
+}
+
+// Messages for Init
+message InitRequest {
+    int32 client_id = 1;
+}
+
+message InitResponse {
+    bool success = 1;
+}
+
+// Messages for Get
+message GetRequest {
+    string key = 1;
+}
+
+message GetResponse {
+    repeated string values = 1;
+    bool success = 2;
+}
+
+// Messages for Put
+message PutRequest {
+    string key = 1;
+    repeated string values = 2;
+}
+
+message PutResponse {
+    bool success = 1;
+}
+
+// Messages for Finalize
+message FinalizeRequest {
+    int32 client_id = 1;
+}
+
+message FinalizeResponse {
+    bool success = 1;
+}
