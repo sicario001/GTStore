@@ -1,25 +1,7 @@
 #include <memory>
 #include <string>
 #include <shared_mutex>
-#include <grpcpp/grpcpp.h>
 #include "gtstore.hpp"
-#include "gtstore.grpc.pb.h"
-
-using grpc::Server;
-using grpc::ServerBuilder;
-using grpc::ServerContext;
-using grpc::Status;
-using gtstore::GTStoreManagerService;
-using gtstore::ManagerInitRequest;
-using gtstore::ManagerInitResponse;
-using gtstore::ManagerUpdateStatusRequest;
-using gtstore::ManagerUpdateStatusResponse;
-using gtstore::ManagerGetRequest;
-using gtstore::ManagerGetResponse;
-using gtstore::ManagerPutRequest;
-using gtstore::ManagerPutResponse;
-using gtstore::ManagerFinalizeRequest;
-using gtstore::ManagerFinalizeResponse;
 
 class GTStoreManagerImpl final : public GTStoreManagerService::Service {
     public:
@@ -81,7 +63,7 @@ class GTStoreManagerImpl final : public GTStoreManagerService::Service {
 			return Status::OK;
 		}
 
-		Status report_failure(ServerContext* context, const ManagerUpdateStatusRequest* request, ManagerUpdateStatusResponse* response) {
+		Status report_failure(ServerContext* context, const ManagerReportFailureRequest* request, ManagerReportFailureResponse* response) {
 			response->set_success(true);
 			std::string node_address = request->storage_node();
 			std::unique_lock<std::shared_mutex> lock(storage_node_mutex);

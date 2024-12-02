@@ -10,6 +10,38 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#include <grpcpp/grpcpp.h>
+#include "gtstore.grpc.pb.h"
+
+using grpc::Server;
+using grpc::ServerBuilder;
+using grpc::ServerContext;
+using grpc::Channel;
+using grpc::ClientContext;
+using grpc::Status;
+using gtstore::GTStoreManagerService;
+using gtstore::ManagerInitRequest;
+using gtstore::ManagerInitResponse;
+using gtstore::ManagerGetRequest;
+using gtstore::ManagerGetResponse;
+using gtstore::ManagerPutRequest;
+using gtstore::ManagerPutResponse;
+using gtstore::ManagerFinalizeRequest;
+using gtstore::ManagerFinalizeResponse;
+using gtstore::ManagerReportFailureRequest;
+using gtstore::ManagerReportFailureResponse;
+using gtstore::ManagerUpdateStatusRequest;
+using gtstore::ManagerUpdateStatusResponse;
+using gtstore::GTStoreStorageService;
+using gtstore::StorageGetRequest;
+using gtstore::StorageGetResponse;
+using gtstore::StoragePutRequest;
+using gtstore::StoragePutResponse;
+using gtstore::StorageCommitPutRequest;
+using gtstore::StorageCommitPutResponse;
+using gtstore::StorageAbortPutRequest;
+using gtstore::StorageAbortPutResponse;
+
 #define MAX_KEY_BYTE_PER_REQUEST 20
 #define MAX_VALUE_BYTE_PER_REQUEST 1000
 

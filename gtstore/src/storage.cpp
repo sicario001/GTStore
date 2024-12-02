@@ -3,28 +3,7 @@
 #include <shared_mutex>
 #include <mutex>
 #include <condition_variable>
-#include <grpcpp/grpcpp.h>
 #include "gtstore.hpp"
-#include "gtstore.grpc.pb.h"
-
-using grpc::Channel;
-using grpc::ClientContext;
-using grpc::Server;
-using grpc::ServerBuilder;
-using grpc::ServerContext;
-using grpc::Status;
-using gtstore::GTStoreStorageService;
-using gtstore::StorageGetRequest;
-using gtstore::StorageGetResponse;
-using gtstore::StoragePutRequest;
-using gtstore::StoragePutResponse;
-using gtstore::StorageCommitPutRequest;
-using gtstore::StorageCommitPutResponse;
-using gtstore::StorageAbortPutRequest;
-using gtstore::StorageAbortPutResponse;
-using gtstore::GTStoreManagerService;
-using gtstore::ManagerUpdateStatusRequest;
-using gtstore::ManagerUpdateStatusResponse;
 
 class GTStoreStorageImpl final : public GTStoreStorageService::Service {
     public:

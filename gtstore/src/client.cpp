@@ -1,33 +1,6 @@
 #include <memory>
 #include <string>
-#include <grpcpp/grpcpp.h>
-#include <grpcpp/health_check_service_interface.h>
 #include "gtstore.hpp"
-#include "gtstore.grpc.pb.h"
-
-using grpc::Channel;
-using grpc::ClientContext;
-using grpc::Status;
-using gtstore::GTStoreManagerService;
-using gtstore::ManagerInitRequest;
-using gtstore::ManagerInitResponse;
-using gtstore::ManagerGetRequest;
-using gtstore::ManagerGetResponse;
-using gtstore::ManagerPutRequest;
-using gtstore::ManagerPutResponse;
-using gtstore::ManagerFinalizeRequest;
-using gtstore::ManagerFinalizeResponse;
-using gtstore::ManagerReportFailureRequest;
-using gtstore::ManagerReportFailureResponse;
-using gtstore::GTStoreStorageService;
-using gtstore::StorageGetRequest;
-using gtstore::StorageGetResponse;
-using gtstore::StoragePutRequest;
-using gtstore::StoragePutResponse;
-using gtstore::StorageCommitPutRequest;
-using gtstore::StorageCommitPutResponse;
-using gtstore::StorageAbortPutRequest;
-using gtstore::StorageAbortPutResponse;
 
 class GTStoreClientImpl {
     private:
@@ -64,12 +37,12 @@ class GTStoreClientImpl {
             ManagerGetRequest request;
             request.set_key(key);
 
-            ManagerGetResponse response;
-            ClientContext context;
-
 			val_t result;
 
 			while (true) {
+				ManagerGetResponse response;
+				ClientContext context;
+
 				Status status = manager_stub->get(&context, request, &response);
 
 				if (!status.ok()) {
@@ -118,9 +91,6 @@ class GTStoreClientImpl {
             ManagerPutRequest request;
             request.set_key(key);
 
-            ManagerPutResponse response;
-            ClientContext context;
-
 			StoragePutRequest storage_put_request;
 			storage_put_request.set_key(key);
 
@@ -129,6 +99,8 @@ class GTStoreClientImpl {
 			}
 
 			while (true) {
+                ManagerPutResponse response;
+                ClientContext context;
             	Status status = manager_stub->put(&context, request, &response);
 
 				if (!status.ok()) {
@@ -139,6 +111,7 @@ class GTStoreClientImpl {
 				std::vector<string> storage_nodes;
 				for (const auto& storage_node : response.storage_nodes()) {
 					storage_nodes.push_back(storage_node);
+					std::cout << "Obtained storage node: " << storage_node << std::endl;
 				}
 
 				std::vector<string> storage_nodes_success;
@@ -161,9 +134,13 @@ class GTStoreClientImpl {
 							std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
 							return false;
 						}
+						else {
+							std::cout << "Reported failure to storage node: " << storage_node << std::endl;
+						}
 					}
 					else {
 						storage_nodes_success.push_back(storage_node);
+						std::cout << "Put request for key: " << request.key() << " routed to " << storage_node << std::endl;
 					}
 				}
 
