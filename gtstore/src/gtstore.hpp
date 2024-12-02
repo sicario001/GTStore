@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <map>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -35,12 +36,12 @@ class GTStoreClient {
 
 class GTStoreManager {
 		public:
-				void init();
+				void init(int num_nodes, int num_replicas);
 };
 
 class GTStoreStorage {
 		public:
-				void init();
+				void init(int node_id);
 };
 
 #endif

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(GTStore)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Protobuf REQUIRED)
@@ -59,6 +59,15 @@ add_executable(manager
 )
 
 target_link_libraries(manager
+    gtstore_proto
+)
+
+# Storage executable
+add_executable(storage
+    src/storage.cpp
+)
+
+target_link_libraries(storage
     gtstore_proto
 )
 

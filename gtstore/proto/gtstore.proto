@@ -2,48 +2,95 @@ syntax = "proto3";
 
 package gtstore;
 
-// Service definition
-service GTStore {
-    rpc Init (InitRequest) returns (InitResponse) {}
-    rpc Get (GetRequest) returns (GetResponse) {}
-    rpc Put (PutRequest) returns (PutResponse) {}
-    rpc Finalize (FinalizeRequest) returns (FinalizeResponse) {}
+// Manager Service definition
+service GTStoreManagerService {
+    rpc init (ManagerInitRequest) returns (ManagerInitResponse) {}
+    rpc update_status (ManagerUpdateStatusRequest) returns (ManagerUpdateStatusResponse) {}
+    rpc get (ManagerGetRequest) returns (ManagerGetResponse) {}
+    rpc put (ManagerPutRequest) returns (ManagerPutResponse) {}
+    rpc report_failure (ManagerReportFailureRequest) returns (ManagerReportFailureResponse) {}
+    rpc finalize (ManagerFinalizeRequest) returns (ManagerFinalizeResponse) {}
 }
 
 // Messages for Init
-message InitRequest {
+message ManagerInitRequest {
     int32 client_id = 1;
 }
 
-message InitResponse {
+message ManagerInitResponse {
+    repeated string storage_nodes = 1;
+    bool success = 2;
+}
+
+// Messages for UpdateStatus
+message ManagerUpdateStatusRequest {
+    string storage_node = 1;
+}
+
+message ManagerUpdateStatusResponse {
     bool success = 1;
 }
 
 // Messages for Get
-message GetRequest {
+message ManagerGetRequest {
     string key = 1;
 }
 
-message GetResponse {
+message ManagerGetResponse {
+    string storage_node = 1;
+    bool success = 2;
+}
+
+// Messages for Put
+message ManagerPutRequest {
+    string key = 1;
+}
+
+message ManagerPutResponse {
+    repeated string storage_nodes = 1;
+    bool success = 2;
+}
+
+// Messages for ReportFailure
+message ManagerReportFailureRequest {
+    repeated string storage_nodes = 1;
+}
+
+message ManagerReportFailureResponse {
+    bool success = 1;
+}
+
+// Messages for Finalize
+message ManagerFinalizeRequest {
+    int32 client_id = 1;
+}
+
+message ManagerFinalizeResponse {
+    bool success = 1;
+}
+
+// Storage Service definition
+service GTStoreStorageService {
+    rpc get (StorageGetRequest) returns (StorageGetResponse) {}
+    rpc put (StoragePutRequest) returns (StoragePutResponse) {}
+}
+
+// Messages for Get
+message StorageGetRequest {
+    string key = 1;
+}
+
+message StorageGetResponse {
     repeated string values = 1;
     bool success = 2;
 }
 
 // Messages for Put
-message PutRequest {
+message StoragePutRequest {
     string key = 1;
     repeated string values = 2;
 }
 
-message PutResponse {
-    bool success = 1;
-}
-
-// Messages for Finalize
-message FinalizeRequest {
-    int32 client_id = 1;
-}
-
-message FinalizeResponse {
+message StoragePutResponse {
     bool success = 1;
 }

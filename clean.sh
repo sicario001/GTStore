@@ -1,0 +1,2 @@
+pkill manager
+pkill storage

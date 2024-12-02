@@ -3,12 +3,13 @@
 #include <string>
 #include <vector>
 
-int main() {
+void single_set_get(int client_id) {
+	// Create client
     GTStoreClient client;
     
     // Initialize client
     std::cout << "Initializing client..." << std::endl;
-    client.init(1);
+    client.init(client_id);
 
     // Test put operation
     std::cout << "\nTesting put operation..." << std::endl;
@@ -28,6 +29,24 @@ int main() {
     // Finalize client
     std::cout << "\nFinalizing client..." << std::endl;
     client.finalize();
+}
+
+int main(int argc, char** argv) {
+	if (argc != 3) {
+		std::cerr << "Usage: " << argv[0] << " <test_name> <client_id>" << std::endl;
+		return 1;
+	}
+
+	std::string test_name = argv[1];
+	int client_id = std::stoi(argv[2]);
+
+	if (test_name == "single_set_get") {
+		single_set_get(client_id);
+	}
+    else {
+		std::cerr << "Invalid test name: " << test_name << std::endl;
+		return 1;
+	}
 
     return 0;
 }

@@ -3,11 +3,11 @@ nodes=$1
 replicas=$2
 
 # Launch the GTStore Manager
-./bin/manager $nodes $replicas &
-sleep 5
+./build/manager $nodes $replicas &
+sleep 3
 
 # Launch <nodes> storage nodes
 for id in $(seq 1 $nodes)
 do
-    ./bin/storage $id &
+    ./build/storage $id &
 done
