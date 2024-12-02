@@ -1,6 +1,7 @@
 #include <memory>
 #include <string>
 #include <grpcpp/grpcpp.h>
+#include <grpcpp/health_check_service_interface.h>
 #include "gtstore.hpp"
 #include "gtstore.grpc.pb.h"
 
@@ -16,11 +17,17 @@ using gtstore::ManagerPutRequest;
 using gtstore::ManagerPutResponse;
 using gtstore::ManagerFinalizeRequest;
 using gtstore::ManagerFinalizeResponse;
+using gtstore::ManagerReportFailureRequest;
+using gtstore::ManagerReportFailureResponse;
 using gtstore::GTStoreStorageService;
 using gtstore::StorageGetRequest;
 using gtstore::StorageGetResponse;
 using gtstore::StoragePutRequest;
 using gtstore::StoragePutResponse;
+using gtstore::StorageCommitPutRequest;
+using gtstore::StorageCommitPutResponse;
+using gtstore::StorageAbortPutRequest;
+using gtstore::StorageAbortPutResponse;
 
 class GTStoreClientImpl {
     private:
@@ -60,33 +67,48 @@ class GTStoreClientImpl {
             ManagerGetResponse response;
             ClientContext context;
 
-            Status status = manager_stub->get(&context, request, &response);
-
-            if (!status.ok()) {
-                std::cout << "Get failed: " << status.error_message() << std::endl;
-                return val_t();
-            }
-
-            string storage_node = response.storage_node();
-			std::cout << "Get request for key: " << request.key() << " routed to " << storage_node << std::endl;
-		
 			val_t result;
+
+			while (true) {
+				Status status = manager_stub->get(&context, request, &response);
+
+				if (!status.ok()) {
+					std::cout << "Get failed: " << status.error_message() << std::endl;
+					return val_t();
+				}
+
+				string storage_node = response.storage_node();
 			
-			StorageGetRequest storage_get_request;
-			storage_get_request.set_key(key);
+				StorageGetRequest storage_get_request;
+				storage_get_request.set_key(key);
 
-			StorageGetResponse storage_get_response;
-			ClientContext storage_context;
+				StorageGetResponse storage_get_response;
+				ClientContext storage_context;
 
-			Status storage_status = storage_node_stubs[storage_node]->get(&storage_context, storage_get_request, &storage_get_response);
+				Status storage_status = storage_node_stubs[storage_node]->get(&storage_context, storage_get_request, &storage_get_response);
 
-			if (!storage_status.ok()) {
-				std::cout << "Get failed: " << storage_status.error_message() << std::endl;
-				return val_t();
-			}
+				if (!storage_status.ok()) {
+					// Report failure to manager
+					ManagerReportFailureRequest report_failure_request;
+					report_failure_request.set_storage_node(storage_node);
+					ManagerReportFailureResponse report_failure_response;
+					ClientContext report_failure_context;
+					Status report_failure_status = manager_stub->report_failure(&report_failure_context, report_failure_request, &report_failure_response);
 
-			for (const auto& value : storage_get_response.values()) {
-				result.push_back(value);
+					if (!report_failure_status.ok()) {
+						std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
+						return val_t();
+					}
+				}
+				else {
+					std::cout << "Get request for key: " << request.key() << " routed to " << storage_node << std::endl;
+
+					for (const auto& value : storage_get_response.values()) {
+						result.push_back(value);
+					}
+
+					break;
+				}
 			}
 
             return result;
@@ -99,38 +121,73 @@ class GTStoreClientImpl {
             ManagerPutResponse response;
             ClientContext context;
 
-            Status status = manager_stub->put(&context, request, &response);
+			StoragePutRequest storage_put_request;
+			storage_put_request.set_key(key);
 
-            if (!status.ok()) {
-                std::cout << "Put failed: " << status.error_message() << std::endl;
-                return false;
-            }
-
-			std::cout << "Put request for key: " << request.key() << " routed to: ";
-			std::vector<std::string> storage_nodes;
-
-			for (const auto& storage_node : response.storage_nodes()) {
-				storage_nodes.push_back(storage_node);
-				std::cout << storage_node << " ";
+			for (const auto& val : value) {
+				storage_put_request.add_values(val);
 			}
-			std::cout << std::endl;
 
-			for (const auto& storage_node : storage_nodes) {
-				StoragePutRequest storage_put_request;
-				storage_put_request.set_key(key);
+			while (true) {
+            	Status status = manager_stub->put(&context, request, &response);
 
-				for (const auto& val : value) {
-					storage_put_request.add_values(val);
+				if (!status.ok()) {
+					std::cout << "Put failed: " << status.error_message() << std::endl;
+					return false;
 				}
 
-				StoragePutResponse storage_put_response;
-				ClientContext storage_context;
+				std::vector<string> storage_nodes;
+				for (const auto& storage_node : response.storage_nodes()) {
+					storage_nodes.push_back(storage_node);
+				}
 
-				Status storage_status = storage_node_stubs[storage_node]->put(&storage_context, storage_put_request, &storage_put_response);
+				std::vector<string> storage_nodes_success;
 
-				if (!storage_status.ok()) {
-					std::cout << "Put failed: " << storage_status.error_message() << std::endl;
-					return false;
+				for (const auto& storage_node : storage_nodes) {
+					StoragePutResponse storage_put_response;
+					ClientContext storage_context;
+
+					Status storage_status = storage_node_stubs[storage_node]->prepare_put(&storage_context, storage_put_request, &storage_put_response);
+
+					if (!storage_status.ok()) {
+						// Report failure to manager
+						ManagerReportFailureRequest report_failure_request;
+						report_failure_request.set_storage_node(storage_node);
+						ManagerReportFailureResponse report_failure_response;
+						ClientContext report_failure_context;
+						Status report_failure_status = manager_stub->report_failure(&report_failure_context, report_failure_request, &report_failure_response);
+
+						if (!report_failure_status.ok()) {
+							std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
+							return false;
+						}
+					}
+					else {
+						storage_nodes_success.push_back(storage_node);
+					}
+				}
+
+				if (storage_nodes_success.size() != storage_nodes.size()) {
+					for (const auto& storage_node : storage_nodes) {
+						// Abort put transaction
+						StorageAbortPutRequest abort_put_request;
+						abort_put_request.set_key(key);
+						StorageAbortPutResponse abort_put_response;
+						ClientContext abort_put_context;
+						Status abort_put_status = storage_node_stubs[storage_node]->abort_put(&abort_put_context, abort_put_request, &abort_put_response);
+					}
+				}
+				else {
+					for (const auto& storage_node : storage_nodes_success) {
+						// Commit put transaction
+						StorageCommitPutRequest commit_put_request;
+						commit_put_request.set_key(key);
+						StorageCommitPutResponse commit_put_response;
+						ClientContext commit_put_context;
+						Status commit_put_status = storage_node_stubs[storage_node]->commit_put(&commit_put_context, commit_put_request, &commit_put_response);
+					}
+
+					break;
 				}
 			}
 

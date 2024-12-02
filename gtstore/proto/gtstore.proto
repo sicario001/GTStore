@@ -53,7 +53,7 @@ message ManagerPutResponse {
 
 // Messages for ReportFailure
 message ManagerReportFailureRequest {
-    repeated string storage_nodes = 1;
+    string storage_node = 1;
 }
 
 message ManagerReportFailureResponse {
@@ -72,7 +72,9 @@ message ManagerFinalizeResponse {
 // Storage Service definition
 service GTStoreStorageService {
     rpc get (StorageGetRequest) returns (StorageGetResponse) {}
-    rpc put (StoragePutRequest) returns (StoragePutResponse) {}
+    rpc prepare_put (StoragePutRequest) returns (StoragePutResponse) {}
+    rpc commit_put (StorageCommitPutRequest) returns (StorageCommitPutResponse) {}
+    rpc abort_put (StorageAbortPutRequest) returns (StorageAbortPutResponse) {}
 }
 
 // Messages for Get
@@ -92,5 +94,23 @@ message StoragePutRequest {
 }
 
 message StoragePutResponse {
+    bool success = 1;
+}
+
+// Messages for CommitPut
+message StorageCommitPutRequest {
+    string key = 1;
+}
+
+message StorageCommitPutResponse {
+    bool success = 1;
+}
+
+// Messages for AbortPut
+message StorageAbortPutRequest {
+    string key = 1;
+}
+
+message StorageAbortPutResponse {
     bool success = 1;
 }
