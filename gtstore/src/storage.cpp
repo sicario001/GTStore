@@ -13,13 +13,17 @@ class GTStoreStorageImpl final : public GTStoreStorageService::Service {
             ManagerUpdateStatusResponse response;
             ClientContext context;
             Status status = manager_stub->update_status(&context, request, &response);
-
-            std::cout << "Storage node " << node_address << " initialized" << std::endl;
         }
 
         Status get(ServerContext* context, const StorageGetRequest* request, StorageGetResponse* response) override {
             std::string key = request->key();
             std::shared_lock<std::shared_mutex> lock(kv_store_mutex);
+
+			if (kv_store.find(key) == kv_store.end()) {
+				response->set_success(false);
+				return Status::OK;
+			}
+
             std::vector<string> values = kv_store[key];
 
             for (auto& value : values) {
@@ -98,7 +102,7 @@ void GTStoreStorage::init(int node_id) {
     builder.RegisterService(&service);
 
     std::unique_ptr<Server> server(builder.BuildAndStart());
-    std::cout << "Server storage node on " << node_address << std::endl;
+    std::cout << "Storage node initialized on " << node_address << std::endl;
     server->Wait();
 }
 

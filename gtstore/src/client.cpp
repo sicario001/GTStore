@@ -60,7 +60,7 @@ class GTStoreClientImpl {
 
 				Status storage_status = storage_node_stubs[storage_node]->get(&storage_context, storage_get_request, &storage_get_response);
 
-				if (!storage_status.ok()) {
+				if (!storage_status.ok() || !storage_get_response.success()) {
 					// Report failure to manager
 					ManagerReportFailureRequest report_failure_request;
 					report_failure_request.set_storage_node(storage_node);
