@@ -14,8 +14,6 @@ services:
     command: bash
     stdin_open: true
     tty: true
-    ports:
-      - "50051-50053:50051-50053"  # Port range for gRPC services
 
 volumes:
   build_cache:

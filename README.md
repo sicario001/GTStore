@@ -2,12 +2,37 @@
 
 GTStore is a distributed key-value store system that provides scalability, availability, and resilience to temporary node failures. It uses gRPC for network communication and supports replication for fault tolerance.
 
-## Prerequisites
+## Environment Setup
+
+You can set up the GTStore development environment either manually or using Docker.
+
+### Manual Setup
+
+#### Prerequisites
 
 - CMake
 - C++17 compatible compiler
 - gRPC
 - Protobuf
+
+### Docker Setup (Recommended)
+
+To set up GTStore using Docker, follow these steps:
+
+#### Build the docker container:
+```bash
+docker-compose up
+```
+
+This will:
+- Build the development environment with all dependencies
+- Mount your project directory to `/app` in the container
+
+#### Run the container
+```bash
+# In a separate terminal
+docker-compose exec gtstore bash
+```
 
 ## Building the Project
 
