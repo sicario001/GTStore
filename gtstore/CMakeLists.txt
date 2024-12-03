@@ -72,10 +72,10 @@ target_link_libraries(storage
 )
 
 # Test application
-add_executable(test_app
+add_executable(client
     src/test_app.cpp
 )
 
-target_link_libraries(test_app
+target_link_libraries(client
     gtstore_client
 )

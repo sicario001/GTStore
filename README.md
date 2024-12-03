@@ -1,22 +1,100 @@
-# Project 4 - GT Store
+# GTStore - Distributed Key-Value Store
 
-**Release Date: Monday, Nov 4 2024**
+GTStore is a distributed key-value store system that provides scalability, availability, and resilience to temporary node failures. It uses gRPC for network communication and supports replication for fault tolerance.
 
-**Due Date: Sunday, Dec 1, 2024, 11:59 PM**
+## Prerequisites
 
----
+- CMake
+- C++17 compatible compiler
+- gRPC
+- Protobuf
 
-In this project, you will implement a distributed key-value store (GTStore) system.
-Nodes in this system should communicate with **network calls**.
-You should give special attention to system properties such as: (i) scalability, (ii) availability, (iii) resilience to temporary node failures.
-Implementation in C/C++. This can be done as a pair (team of 2 students).
+## Building the Project
 
-You may discuss ideas with students in the class, but raw source code must not be shared.
-Copying others is NEVER allowed for any reason.
-Please refer to the Georgia Tech [honor code](https://policylibrary.gatech.edu/student-life/academic-honor-code/).
+To build the project, run:
 
-* Clone the repo to get source code
-* [Project Description](./doc/project_4_description.md)
-* [Project Test/Report](./doc/project_4_test_report.md)
-* [Project Submission](./doc/project_4_submission.md)
+```bash
+./build.sh
+```
 
+This will create a `build` directory and compile all the necessary components:
+- `manager`: Manager service
+- `storage`: Storage node service
+- `client`: Client application
+
+## Running the System
+
+1. Start the service with N storage nodes and R replicas:
+```bash
+./start_service.sh <num_nodes> <num_replicas>
+```
+Example: `./start_service.sh 3 2` starts the system with 3 storage nodes and 2 replicas
+
+2. Use the client application:
+```bash
+# Put a key-value pair
+./build/client --put <key> --val <value> [--id <client_id>] [--verbose]
+
+# Get a value
+./build/client --get <key> [--id <client_id>] [--verbose]
+```
+
+Examples:
+```bash
+# Put a key-value pair
+./build/client --put key1 --val value1 --verbose
+
+# Get a value
+./build/client --get key1 --verbose
+```
+
+3. Clean up all processes:
+```bash
+./clean.sh
+```
+
+## Running Tests
+
+The project includes several test scripts in the `tests` directory:
+
+1. Single Server Test:
+```bash
+./tests/single_server_test.sh
+```
+Tests basic operations on a single server setup.
+
+2. Multi-Server Test:
+```bash
+./tests/multi_server_test.sh
+```
+Tests operations with multiple storage nodes.
+
+3. Single Node Failure Test:
+```bash
+./tests/single_node_failure_test.sh
+```
+Tests system behavior when one storage node fails.
+
+4. Multi Node Failure Test:
+```bash
+./tests/multi_node_failure_test.sh
+```
+Tests system behavior when multiple storage nodes fail.
+
+5. Run All Tests:
+```bash
+./tests/run_all_tests.sh
+```
+Runs all test scenarios in sequence.
+
+## Client Options
+
+```
+Usage: client [options]
+Options:
+  --put <key>         Put a key
+  --val <value>       Value for put operation (required with --put)
+  --get <key>         Get a key
+  --id <client_id>    Client ID (default: 1)
+  --verbose           Enable verbose output
+  --help              Show this help message

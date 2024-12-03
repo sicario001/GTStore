@@ -2,6 +2,8 @@
 #include <string>
 #include "gtstore.hpp"
 
+bool g_verbose = false;
+
 class GTStoreClientImpl {
     private:
         std::unique_ptr<GTStoreManagerService::Stub> manager_stub;
@@ -23,7 +25,9 @@ class GTStoreClientImpl {
             Status status = manager_stub->init(&context, request, &response);
 
             if (!status.ok()) {
-                std::cout << "Init failed: " << status.error_message() << std::endl;
+				if (g_verbose) {
+					std::cout << "Init failed: " << status.error_message() << std::endl;
+				}
                 return;
             }
 
@@ -46,7 +50,9 @@ class GTStoreClientImpl {
 				Status status = manager_stub->get(&context, request, &response);
 
 				if (!status.ok()) {
-					std::cout << "Get failed: " << status.error_message() << std::endl;
+					if (g_verbose) {
+						std::cout << "Get failed: " << status.error_message() << std::endl;
+					}
 					return val_t();
 				}
 
@@ -69,16 +75,21 @@ class GTStoreClientImpl {
 					Status report_failure_status = manager_stub->report_failure(&report_failure_context, report_failure_request, &report_failure_response);
 
 					if (!report_failure_status.ok()) {
-						std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
+						if (g_verbose) {
+							std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
+						}
 						return val_t();
 					}
 				}
 				else {
-					std::cout << "Get request for key: " << request.key() << " routed to " << storage_node << std::endl;
+					if (g_verbose) std::cout << "<GET> " << request.key() << ", ";
 
 					for (const auto& value : storage_get_response.values()) {
 						result.push_back(value);
+						if (g_verbose) std::cout << value << " ";
 					}
+
+					if (g_verbose) std::cout << ", from " << storage_node << std::endl;
 
 					break;
 				}
@@ -104,14 +115,15 @@ class GTStoreClientImpl {
             	Status status = manager_stub->put(&context, request, &response);
 
 				if (!status.ok()) {
-					std::cout << "Put failed: " << status.error_message() << std::endl;
+					if (g_verbose) {
+						std::cout << "PUT failed: " << status.error_message() << std::endl;
+					}
 					return false;
 				}
 
 				std::vector<string> storage_nodes;
 				for (const auto& storage_node : response.storage_nodes()) {
 					storage_nodes.push_back(storage_node);
-					std::cout << "Obtained storage node: " << storage_node << std::endl;
 				}
 
 				std::vector<string> storage_nodes_success;
@@ -131,16 +143,14 @@ class GTStoreClientImpl {
 						Status report_failure_status = manager_stub->report_failure(&report_failure_context, report_failure_request, &report_failure_response);
 
 						if (!report_failure_status.ok()) {
-							std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
+							if (g_verbose) {
+								std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
+							}
 							return false;
-						}
-						else {
-							std::cout << "Reported failure to storage node: " << storage_node << std::endl;
 						}
 					}
 					else {
 						storage_nodes_success.push_back(storage_node);
-						std::cout << "Put request for key: " << request.key() << " routed to " << storage_node << std::endl;
 					}
 				}
 
@@ -155,6 +165,16 @@ class GTStoreClientImpl {
 					}
 				}
 				else {
+					if (g_verbose) {
+						std::cout << "<PUT> " << key << ", ";
+
+						for (const auto& val : value) {
+							std::cout << val << " ";
+						}
+
+						std::cout << ", to ";
+					}
+
 					for (const auto& storage_node : storage_nodes_success) {
 						// Commit put transaction
 						StorageCommitPutRequest commit_put_request;
@@ -162,12 +182,15 @@ class GTStoreClientImpl {
 						StorageCommitPutResponse commit_put_response;
 						ClientContext commit_put_context;
 						Status commit_put_status = storage_node_stubs[storage_node]->commit_put(&commit_put_context, commit_put_request, &commit_put_response);
+
+						if (g_verbose) std::cout << storage_node << ", ";
 					}
 
-					break;
+					if (g_verbose) std::cout << std::endl;
 				}
-			}
 
+				break;
+			}
             return true;
         }
 
@@ -181,7 +204,9 @@ class GTStoreClientImpl {
             Status status = manager_stub->finalize(&context, request, &response);
 
             if (!status.ok()) {
-                std::cout << "Finalize failed: " << status.error_message() << std::endl;
+                if (g_verbose) {
+                    std::cout << "Finalize failed: " << status.error_message() << std::endl;
+                }
                 return;
             }
         }
@@ -197,11 +222,12 @@ GTStoreClient::~GTStoreClient() {
 	finalize();
 }
 
-void GTStoreClient::init(int id) {
+void GTStoreClient::init(int id, bool verbose) {
     auto channel = grpc::CreateChannel("localhost:50000", grpc::InsecureChannelCredentials());
     impl = new GTStoreClientImpl(channel);
     impl->init(id);
     client_id = id;
+	g_verbose = verbose;
 }
 
 void GTStoreClient::finalize() {

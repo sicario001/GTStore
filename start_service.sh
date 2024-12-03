@@ -11,3 +11,5 @@ for id in $(seq 1 $nodes)
 do
     ./build/storage $id &
 done
+
+sleep 3

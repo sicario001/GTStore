@@ -59,7 +59,7 @@ class GTStoreClient {
 		public:
 				GTStoreClient();
 				~GTStoreClient();
-				void init(int id);
+				void init(int id, bool verbose = false);
 				void finalize();
 				val_t get(string key);
 				bool put(string key, val_t value);
