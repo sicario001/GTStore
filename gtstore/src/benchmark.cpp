@@ -300,7 +300,7 @@ int main(int argc, char** argv) {
             std::cerr << "Error: Number of replicas must be positive\n";
             return 1;
         }
-        single_client_throughput_test(2000, replicas);
+        single_client_throughput_test(200000, replicas);
     }
 
     if (run_concurrent) {
@@ -308,11 +308,11 @@ int main(int argc, char** argv) {
             std::cerr << "Error: Number of replicas and threads must be positive\n";
             return 1;
         }
-        throughput_test(2000, replicas, num_threads);
+        throughput_test(200000, replicas, num_threads);
     }
 
     if (run_loadbalance) {
-        loadbalance_test(1000);
+        loadbalance_test(100000);
     }
 
     return 0;

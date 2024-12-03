@@ -79,17 +79,17 @@ echo -e "${GREEN}Starting GTStore Performance Benchmarks${NC}"
 # Remove old results
 rm -f throughput_results.txt loadbalance_results.txt single_client_results.txt
 
-# # Run single client tests for different replica counts
-# echo -e "${GREEN}Running single client tests...${NC}"
-# for replicas in 1 3 5; do
-#     run_single_client_test $replicas
-# done
+# Run single client tests for different replica counts
+echo -e "${GREEN}Running single client tests...${NC}"
+for replicas in 1 3 5; do
+    run_single_client_test $replicas
+done
 
-# # Run concurrent tests for different replica counts
-# echo -e "${GREEN}Running concurrent tests...${NC}"
-# for replicas in 1 3 5; do
-#     run_concurrent_test $replicas 8
-# done
+# Run concurrent tests for different replica counts
+echo -e "${GREEN}Running concurrent tests...${NC}"
+for replicas in 1 3 5; do
+    run_concurrent_test $replicas 8
+done
 
 # Run load balance test
 run_loadbalance_test
