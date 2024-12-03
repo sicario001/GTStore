@@ -7,7 +7,7 @@
 
 class GTStoreManagerImpl final : public GTStoreManagerService::Service {
     public:
-		GTStoreManagerImpl(int num_nodes, int num_replicas, int num_virtual_replicas = 5) {
+		GTStoreManagerImpl(int num_nodes, int num_replicas, int num_virtual_replicas = 1000) {
 			this->num_nodes = num_nodes;
 			this->num_replicas = num_replicas;
 			this->num_virtual_replicas = num_virtual_replicas;

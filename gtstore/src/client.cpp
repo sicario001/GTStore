@@ -32,9 +32,16 @@ class GTStoreClientImpl {
             }
 
 			for (const auto& storage_node : response.storage_nodes()) {
-				auto channel = grpc::CreateChannel(storage_node, grpc::InsecureChannelCredentials());
+				auto channel = get_storage_channel(storage_node);
 				storage_node_stubs[storage_node] = GTStoreStorageService::NewStub(channel);
 			}
+        }
+
+        std::shared_ptr<grpc::Channel> get_storage_channel(const std::string& address) {
+            return grpc::CreateChannel(
+                address,
+                grpc::InsecureChannelCredentials()
+            );
         }
 
         val_t get(std::string key) {
@@ -98,7 +105,7 @@ class GTStoreClientImpl {
             return result;
         }
 
-        bool put(std::string key, val_t value) {
+        vector<string> put(std::string key, val_t value) {
             ManagerPutRequest request;
             request.set_key(key);
 
@@ -118,7 +125,7 @@ class GTStoreClientImpl {
 					if (g_verbose) {
 						std::cout << "PUT failed: " << status.error_message() << std::endl;
 					}
-					return false;
+					return std::vector<string>();
 				}
 
 				std::vector<string> storage_nodes;
@@ -146,7 +153,7 @@ class GTStoreClientImpl {
 							if (g_verbose) {
 								std::cout << "Report failure failed: " << report_failure_status.error_message() << std::endl;
 							}
-							return false;
+							return std::vector<string>();
 						}
 					}
 					else {
@@ -187,11 +194,11 @@ class GTStoreClientImpl {
 					}
 
 					if (g_verbose) std::cout << std::endl;
-				}
 
-				break;
+					return storage_nodes;
+				}
 			}
-            return true;
+            return std::vector<string>();
         }
 
         void finalize() {
@@ -223,7 +230,11 @@ GTStoreClient::~GTStoreClient() {
 }
 
 void GTStoreClient::init(int id, bool verbose) {
-    auto channel = grpc::CreateChannel("localhost:50000", grpc::InsecureChannelCredentials());
+    auto channel = grpc::CreateChannel(
+        "localhost:50000",
+        grpc::InsecureChannelCredentials()
+    );
+
     impl = new GTStoreClientImpl(channel);
     impl->init(id);
     client_id = id;
@@ -243,7 +254,7 @@ val_t GTStoreClient::get(string key) {
     return impl->get(key);
 }
 
-bool GTStoreClient::put(string key, val_t value) {
-    if (!impl) return false;
+vector<string> GTStoreClient::put(string key, val_t value) {
+    if (!impl) return std::vector<string>();
     return impl->put(key, value);
 }

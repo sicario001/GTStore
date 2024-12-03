@@ -98,3 +98,40 @@ Options:
   --id <client_id>    Client ID (default: 1)
   --verbose           Enable verbose output
   --help              Show this help message
+```
+
+## Running Benchmarks
+
+The project includes a benchmarks to evaluate system performance:
+
+Use the following command to run all benchmarks:
+```bash
+./tests/benchmark_test.sh
+```
+
+Generates the following plots:
+- single_client_throughput.png
+- concurrent_throughput.png
+- loadbalance.png
+
+### Benchmark Types
+
+1. Single Client Throughput Test:
+```bash
+./build/benchmark --throughput <replicas>
+```
+Tests the performance of a single client with a specified number of replicas.
+
+2. Concurrent Throughput Test:
+```bash
+./build/benchmark --concurrent <replicas> <threads>
+```
+Tests the performance of multiple clients with a specified number of replicas and threads. Defaults to 8 threads.
+
+3. Load Balance Test:
+```bash
+./build/benchmark --loadbalance
+```
+Tests the distribution of keys across nodes after a large number of insertions.
+
+**You will need to start the service before running the individual benchmarks.**

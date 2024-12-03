@@ -11,7 +11,7 @@ echo -e "${GREEN}Building GTStore...${NC}"
 mkdir -p build
 
 # Build using CMake
-cmake -S gtstore/ -B build/
+cmake -S gtstore/ -B build/ -DCMAKE_BUILD_TYPE=Release
 make -C build
 
 if [ $? -eq 0 ]; then

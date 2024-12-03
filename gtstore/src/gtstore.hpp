@@ -62,7 +62,7 @@ class GTStoreClient {
 				void init(int id, bool verbose = false);
 				void finalize();
 				val_t get(string key);
-				bool put(string key, val_t value);
+				vector<string> put(string key, val_t value);
 };
 
 class GTStoreManager {

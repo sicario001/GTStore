@@ -1,8 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 project(GTStore)
 
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add optimization flags
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_BUILD_TYPE Release)
+
+# Add gRPC performance flags
+add_definitions(-DGRPC_ENABLE_FORK_SUPPORT=0)
+add_definitions(-DGRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK=0)
 
 find_package(Protobuf REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
@@ -77,5 +86,14 @@ add_executable(client
 )
 
 target_link_libraries(client
+    gtstore_client
+)
+
+# Benchmark application
+add_executable(benchmark
+    src/benchmark.cpp
+)
+
+target_link_libraries(benchmark
     gtstore_client
 )

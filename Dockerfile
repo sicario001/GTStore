@@ -45,3 +45,6 @@ ENV PATH=/usr/local/bin:$PATH
 
 # Build command (to be run when container starts)
 CMD ["bash"]
+
+# Install Python dependencies
+RUN pip3 install matplotlib

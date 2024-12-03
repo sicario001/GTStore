@@ -94,8 +94,7 @@ int main(int argc, char** argv) {
             return 1;
         }
     } else if (is_put) {
-        bool success = client.put(key, {value});
-        if (success) {
+        if (!client.put(key, {value}).empty()) {
             return 0;
         } else {
             std::cerr << "Error: Put operation failed\n";
