@@ -21,7 +21,7 @@ To set up GTStore using Docker, follow these steps:
 
 #### Build the docker container:
 ```bash
-docker-compose up
+docker build -t gtstore-dev .
 ```
 
 This will:
@@ -31,7 +31,13 @@ This will:
 #### Run the container
 ```bash
 # In a separate terminal
-docker-compose exec gtstore bash
+docker run -it \
+  --name gtstore \
+  -v "$(pwd)":/app \
+  -v build_cache:/app/build \
+  -w /app \
+  gtstore-dev \
+  bash
 ```
 
 ## Building the Project

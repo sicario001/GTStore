@@ -40,7 +40,7 @@ WORKDIR /app
 COPY . .
 
 # Set environment variables
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib
 ENV PATH=/usr/local/bin:$PATH
 
 # Build command (to be run when container starts)
